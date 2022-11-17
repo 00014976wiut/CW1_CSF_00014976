@@ -62,6 +62,8 @@ def snake_paint_item(canvas, x, y):
 
 snake_paint_item(canvas, snake_x, snake_y)
 
+
+
 def check_can_we_delete_snake_item():
     if len(snake_list) >= snake_size:
         temp_item = snake_list.pop(0)
@@ -78,3 +80,54 @@ def check_if_we_found_present():
             canvas.delete(presents_list[i][2])
             canvas.delete(presents_list[i][3])
     #print(snake_x, snake_y)
+
+    #The movement of the snake
+def snake_move(event):
+    global snake_x
+    global snake_y
+    global snake_x_nav
+    global snake_y_nav
+
+
+ #In this code is one of main part of app. If the snake touc hitsel or border of the screen, the app will check for it. Plus while moving the snake its tail will remove by the way fullfilling the view of movement.   
+    if event.keysym == "Up":
+        snake_x_nav = 0
+        snake_y_nav = -1
+        check_can_we_delete_snake_item()
+    elif event.keysym == "Down":
+        snake_x_nav = 0
+        snake_y_nav = 1
+        check_can_we_delete_snake_item()
+    elif event.keysym == "Left":
+        snake_x_nav = -1
+        snake_y_nav = 0
+        check_can_we_delete_snake_item()
+    elif event.keysym == "Right":
+        snake_x_nav = 1
+        snake_y_nav = 0
+        check_can_we_delete_snake_item()
+    snake_x = snake_x + snake_x_nav
+    snake_y = snake_y + snake_y_nav
+    snake_paint_item(canvas, snake_x, snake_y)
+    check_if_we_found_present()
+
+canvas.bind_all("<KeyPress-Left>", snake_move)
+canvas.bind_all("<KeyPress-Right>", snake_move)
+canvas.bind_all("<KeyPress-Up>", snake_move)
+canvas.bind_all("<KeyPress-Down>", snake_move)
+
+def game_over():
+    global Game_Running
+    Game_Running = False
+
+def check_if_borders():
+    if snake_x>virtual_game_x or snake_x<0 or snake_y>virtual_game_y or snake_y<0:
+        game_over()
+
+def check_we_touch_self(f_x, f_y):
+    global Game_Running
+    if not (snake_x_nav == 0 and snake_y_nav == 0):
+        for i in range(len(snake_list)):
+            if snake_list[i][0] == f_x and snake_list[i][1] == f_y:
+                print("found!!!")
+                Game_Running = False
